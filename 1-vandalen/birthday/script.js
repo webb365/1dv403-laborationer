@@ -4,12 +4,23 @@ window.onload = function(){
 
 	
 	var birthday = function(date){
+	 	var matches = date.match(/(\d{4})[- \/](\d{1,2})[- \/](\d{1,2})/);
+	    if (!matches){
+		    throw new Error("Värdet är inte korrekt format")
+	    }
+
+	    var year = parseInt(matches[1], 10);
+	    var month = (parseInt(matches[2], 10)-1);
+	    var day = (parseInt(matches[3], 10)+1);
+		var birthday = new Date(year, month, day);
+
+		var today = new Date();
+		birthday.setFullYear(today.getFullYear());
+		if (today > birthday) {
+		  birthday.setFullYear(today.getFullYear() + 1);
+		}
 		
-
-
-			// Din kod här.
-
-
+	    return(Math.floor((birthday - today) / (1000*60*60*24)));
 
 
 	};
