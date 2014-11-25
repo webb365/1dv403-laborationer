@@ -1,16 +1,23 @@
 var MessageBoard = {
 	messages:[],
-	init:function(e){
 	
+	init:function(e){
+		document.getElementById("skriv").onclick=function(){MessageBoard.messageAdd()};
 	},
 	render:function(){
 		MessageBoard.messages.forEach(function(message){
 			console.log(message.getHTMLText());
 		});
+	},
+	messageAdd:function(){	
+		MessageBoard.messages.push( new message(document.getElementById("kommentar").value));
+		document.getElementById("kommentar").value = '';
+		MessageBoard.render();
 	}
 };
 
-MessageBoard.render();
+MessageBoard.init();
+
 function message(_text)
 {
    var text;
@@ -45,7 +52,3 @@ function message(_text)
    }()
 
 }
-
-var message1 = new message('text');
-var message2 = new message('text2');
-alert(message1.getDate()); 
