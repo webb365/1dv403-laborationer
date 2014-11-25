@@ -1,0 +1,10 @@
+.panel{
+	text-align: left;
+}
+.button-right{
+	float: right;
+	display: inline;
+}
+.panel-heading{
+	height: 55px;
+}
