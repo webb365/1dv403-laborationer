@@ -1,4 +1,4 @@
-function Fraction()
+function message(_text)
 {
    var text;
    var date;
@@ -27,11 +27,12 @@ function Fraction()
         return float2rat(numerator/denominator);
    };
    var __construct = function() {
-	   
+		date =  Date();
+		text = _text;
    }()
 
 }
 
-var fraction = new Fraction();
+var message1 = new message();
 
-alert(fraction.toString()); 
+alert(message1.getDate()); 
