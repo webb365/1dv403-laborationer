@@ -1,7 +1,9 @@
+"use strict";
+
 var MessageBoard = {
 	messages:[],
 	
-	init:function(e){
+	init:function(){
 		document.getElementById("skriv").onclick=function(){MessageBoard.messageAdd()};
 		document.onkeypress = function (e) {
 			 if (e.keyCode == 13&& !event.shiftKey){
@@ -16,6 +18,7 @@ var MessageBoard = {
 			document.getElementById("messages").innerHTML += MessageBoard.messageGenarate(i);
 			i++;
 		});
+		document.getElementById("count").innerHTML = 'Antal meddelanden: ' + i;
 	},
 	messageAdd:function(){	
 		MessageBoard.messages.push( new message(document.getElementById("kommentar").value));
@@ -40,9 +43,7 @@ var MessageBoard = {
 		alert(MessageBoard.messages[num].toString());
 	}
 };
-
 MessageBoard.init();
-
 function message(_text)
 {
    var text;

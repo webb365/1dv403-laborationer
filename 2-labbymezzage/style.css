@@ -8,3 +8,7 @@
 .panel-heading{
 	height: 55px;
 }
+.span-right{
+	margin-bottom: 20px;
+	float: right;
+}
