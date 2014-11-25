@@ -1,3 +1,16 @@
+var MessageBoard = {
+	messages:[],
+	init:function(e){
+	
+	},
+	render:function(){
+		MessageBoard.messages.forEach(function(message){
+			console.log(message.getHTMLText());
+		});
+	}
+};
+
+MessageBoard.render();
 function message(_text)
 {
    var text;
@@ -24,7 +37,7 @@ function message(_text)
         return false;
    };
    this.getHTMLText = function() {
-        return float2rat(numerator/denominator);
+        return text;
    };
    var __construct = function() {
 		date =  Date();
@@ -33,6 +46,6 @@ function message(_text)
 
 }
 
-var message1 = new message();
-
+var message1 = new message('text');
+var message2 = new message('text2');
 alert(message1.getDate()); 
