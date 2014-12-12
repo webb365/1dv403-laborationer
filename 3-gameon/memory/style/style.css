@@ -1,0 +1,13 @@
+.game{
+	text-align: center;
+	margin: 20px;
+	
+}
+.icon-style{
+	font-size: 8vw;
+}
+@media (min-width:768px){
+	.icon-style{
+		font-size: 4vw;
+	}	
+}
