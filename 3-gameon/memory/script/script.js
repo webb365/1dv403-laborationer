@@ -10,14 +10,14 @@ function memory(_cols,_rows)
 
 
 
-this.toHTML = function() {
+   this.toHTML = function() {
 		var i = 0;
 		var html = '<div class="row">';
 		var current_col = 0;
 		var current_row = 0;
 		var width = Math.floor(12/cols);
 		rand_array.forEach(function (item){
-		  html += '<div class="col-sm-' + width + '"><a onclick="mem.click('+ i +');">' + getIconHTML(item) + '</a></div>';
+		  html += '<div class="col-sm-' + width + '"><a id="card-'+ i +'" onclick="mem.click('+ i +');">' + getIconHTML(0) + '</a></div>';
 		  current_col++;
 		  i++;
 		  if(current_col==cols){
@@ -32,7 +32,10 @@ this.toHTML = function() {
 		});
 		document.getElementById("memory").innerHTML = html;
         return html;
-   };
+   }
+   this.click = function(i) {
+       document.getElementById("card-" + i).innerHTML = getIconHTML(rand_array[i]);
+   }
  
 /*   this.getText = function() {
        return text;
