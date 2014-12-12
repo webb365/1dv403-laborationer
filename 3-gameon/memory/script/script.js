@@ -1,6 +1,6 @@
 "use strict";
 
-var mem = new memory(8,4);
+var mem = new memory(10,2);
 mem.toHTML();
 function memory(_cols,_rows)
 {
@@ -17,7 +17,7 @@ this.toHTML = function() {
 		var current_row = 0;
 		var width = Math.floor(12/cols);
 		rand_array.forEach(function (item){
-		  html += '<div class="col-sm-' + width + '"><a onclick="mem.click(\'' + i + '\');"></a></div>';
+		  html += '<div class="col-sm-' + width + '"><a onclick="mem.click('+ i +');">' + getIconHTML(item) + '</a></div>';
 		  current_col++;
 		  i++;
 		  if(current_col==cols){
@@ -33,11 +33,52 @@ this.toHTML = function() {
 		document.getElementById("memory").innerHTML = html;
         return html;
    };
+ 
+/*   this.getText = function() {
+       return text;
+   }
+   this.setText = function(_text) {
+       text = _text;
+   }
   
-  
-  
-  
-   this.getIconHTML = function(id) {
+   this.getDate = function() {
+       return date;
+   }
+   this.setDate = function(_date) {
+      date = _date;
+   }  
+   
+   this.toString = function() {
+	  return date.toString();
+
+   };
+   this.toStringMini = function() {
+	  return date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+   };
+   this.getHTMLText = function() {
+        return text.replace("\n", "<br />");
+   };
+   
+   
+*/
+   var __construct = function() {
+		rows =  _rows;
+		cols = _cols;
+		if(cols>12||cols*rows > 20){
+			console.log('#########################################################');
+			console.log('# Spelet kommer köras på standard instälningarna pga fel#');
+			console.log('#########################################################');
+			rows = 4;
+			cols = 4;
+		}
+		rand_array = RandomGenerator.getPictureArray(rows,cols);
+		
+   }()
+
+}
+
+function getIconHTML(id) {
 	   var icon = '';
 	   switch (id) {
 		    case 0:
@@ -74,47 +115,6 @@ this.toHTML = function() {
 		        icon = "fa-paypal";
 		        break;
 		} 
-       return icon;
-   }
-
-/*   this.getText = function() {
-       return text;
-   }
-   this.setText = function(_text) {
-       text = _text;
-   }
-  
-   this.getDate = function() {
-       return date;
-   }
-   this.setDate = function(_date) {
-      date = _date;
-   }  
-   
-   this.toString = function() {
-	  return date.toString();
-
-   };
-   this.toStringMini = function() {
-	  return date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-
-   };
-   this.getHTMLText = function() {
-        return text.replace("\n", "<br />");
-   };
-   
-   
-*/
-   var __construct = function() {
-		rows =  _rows;
-		cols = _cols;
-		if(cols>12||cols*rows > 20){
-			console.log('#######################################################');
-			console.log('# Spelet kommer ej köras pga felaktiga värden i koden #');
-			console.log('#######################################################');
-		}
-		rand_array = RandomGenerator.getPictureArray(rows,cols);
 		
-   }()
-
-}
+       return '<span class="fa-stack fa-lg  icon-style"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa ' + icon + ' fa-stack-1x"></i></span>';
+   }
