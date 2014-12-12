@@ -1,12 +1,29 @@
 "use strict";
 
-new memory(4,4);
+var mem = new memory(4,4);
+mem.toHTML();
 function memory(_cols,_rows)
 {
    var cols;
    var rows;
-   var rand_Array;
+   var rand_array;
 
+
+
+this.toHTML = function() {
+		var html = '';
+		var current_col = 0;
+		rand_array.forEach(function (item){
+		  html += item;
+		  current_col++;
+		  if(current_col==cols){
+			  current_col = 0;
+			  html += '#';
+		  }
+		});
+		console.log(html);
+        return html;
+   };
 
 /*   this.getText = function() {
        return text;
@@ -39,8 +56,8 @@ function memory(_cols,_rows)
    var __construct = function() {
 		rows =  _rows;
 		cols = _cols;
-		rand_Array = RandomGenerator.getPictureArray(rows,cols);
-		console.log(rand_Array);
+		rand_array = RandomGenerator.getPictureArray(rows,cols);
+		
    }()
 
 }
