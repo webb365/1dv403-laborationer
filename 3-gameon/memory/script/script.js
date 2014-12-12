@@ -1,15 +1,15 @@
 "use strict";
 
-var mem = new memory(10,2);
+var mem = new memory(4,4);
 mem.toHTML();
 function memory(_cols,_rows)
 {
    var cols;
    var rows;
    var rand_array;
-
-
-
+   var last_click = -1;
+   var guesses = 0; 
+   var disabled = [];
    this.toHTML = function() {
 		var i = 0;
 		var html = '<div class="row">';
@@ -34,7 +34,30 @@ function memory(_cols,_rows)
         return html;
    }
    this.click = function(i) {
-       document.getElementById("card-" + i).innerHTML = getIconHTML(rand_array[i]);
+	  if(disabled.indexOf(i) == -1){
+		  console.log(disabled);
+	 	  if(last_click != -1){
+		 	   document.getElementById("card-" +last_click).innerHTML = getIconHTML(0);
+	 	  }
+		  guesses++; 
+		  console.log(guesses);
+		  if(rand_array[last_click] == rand_array[i] && i != last_click){
+			  	disabled.push(i);
+			  	disabled.push(last_click);
+		   		document.getElementById("card-" + last_click).innerHTML = getIconHTML(rand_array[i]);
+		   		document.getElementById("card-" + i).innerHTML = getIconHTML(rand_array[i]);
+		   		last_click= -1;
+		   		i = -1;
+		   		if(){
+			   		
+		   		}
+		   }else{
+				document.getElementById("card-" + i).innerHTML = getIconHTML(rand_array[i]);
+	
+		   }
+	  }	   
+	   
+	   last_click = i;
    }
  
 /*   this.getText = function() {
