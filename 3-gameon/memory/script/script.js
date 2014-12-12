@@ -1,6 +1,6 @@
 "use strict";
 
-var mem = new memory(4,4);
+var mem = new memory(4,5);
 mem.toHTML();
 function memory(_cols,_rows)
 {
@@ -9,7 +9,8 @@ function memory(_cols,_rows)
    var rand_array;
    var last_click = -1;
    var guesses = 0; 
-   var disabled = [];
+   var left;
+   var disabled = Array();
    this.toHTML = function() {
 		var i = 0;
 		var html = '<div class="row">';
@@ -17,7 +18,7 @@ function memory(_cols,_rows)
 		var current_row = 0;
 		var width = Math.floor(12/cols);
 		rand_array.forEach(function (item){
-		  html += '<div class="col-sm-' + width + '"><a id="card-'+ i +'" onclick="mem.click('+ i +');">' + getIconHTML(0) + '</a></div>';
+		  html += '<div class="col-xs-' + width + '"><a id="card-'+ i +'" onclick="mem.click('+ i +');">' + getIconHTML(0) + '</a></div>';
 		  current_col++;
 		  i++;
 		  if(current_col==cols){
@@ -35,7 +36,6 @@ function memory(_cols,_rows)
    }
    this.click = function(i) {
 	  if(disabled.indexOf(i) == -1){
-		  console.log(disabled);
 	 	  if(last_click != -1){
 		 	   document.getElementById("card-" +last_click).innerHTML = getIconHTML(0);
 	 	  }
@@ -48,15 +48,15 @@ function memory(_cols,_rows)
 		   		document.getElementById("card-" + i).innerHTML = getIconHTML(rand_array[i]);
 		   		last_click= -1;
 		   		i = -1;
-		   		if(){
-			   		
-		   		}
+		   		left += -2;
 		   }else{
 				document.getElementById("card-" + i).innerHTML = getIconHTML(rand_array[i]);
 	
 		   }
 	  }	   
-	   
+	   if(left== 0){
+		  alert('Du lyckades efter ' + guesses + ' försök.');
+	   }
 	   last_click = i;
    }
  
@@ -98,6 +98,7 @@ function memory(_cols,_rows)
 			rows = 4;
 			cols = 4;
 		}
+		left = rows*cols;
 		rand_array = RandomGenerator.getPictureArray(rows,cols);
 		
    }()
