@@ -1,7 +1,7 @@
 "use strict";
 
 var Quiz = {
-	questions:[],
+	try_count:0,
 	nextUrl: '',
 	init:function(){
 		document.getElementById("answer_btn").addEventListener("click", Quiz.postAnswer);
@@ -19,7 +19,8 @@ var Quiz = {
 			  }
 		  }
 	},
-	postAnswer:function(){	
+	postAnswer:function(){
+		Quiz.try_count++;	
 		var answer_txt = document.getElementById('answer_con').value;
 		var request = new XMLHttpRequest();
 		  request.open("POST",Quiz.nextUrl,true);
@@ -29,11 +30,12 @@ var Quiz = {
 			  if (request.readyState==4 && request.status==200){
 				document.getElementById('status').innerHTML  = '';
 				var response = JSON.parse(request.responseText);
-				if(response.nextURL != "undefined"){
-					alert(response.nextURL);
+				if(response.nextURL != null){
 					Quiz.proccesQuestion(response.nextURL);
 				}else{
-					alert('hej');
+					document.getElementById('status').innerHTML  = '<div class="alert alert-success" role="alert">Du klarade quizen på ' + Quiz.try_count + ' försök!</div>';
+					document.getElementById('question').innerHTML  = '';
+					document.getElementById('answer').innerHTML  = '';
 				}
 			  }else if(request.readyState==4 && request.status==400){
 				document.getElementById('status').innerHTML  = '<div class="alert alert-danger" role="alert">Fel svar</div>';
@@ -44,15 +46,6 @@ var Quiz = {
 		Quiz.getQuestion(url,function(question){
 			document.getElementById('question').innerHTML = question;	
 		});	 
-	},
-	messageRemoveAdd:function(id){
-	
-	},
-	messageRemove:function(num){	
-		
-	},
-	showDate:function(num){	
-		
 	}
 };
 Quiz.init();
