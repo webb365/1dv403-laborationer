@@ -29,8 +29,12 @@ var Quiz = {
 			  if (request.readyState==4 && request.status==200){
 				document.getElementById('status').innerHTML  = '';
 				var response = JSON.parse(request.responseText);
-				Quiz.nextUrl = response.nextURL; 
-			  	alert(request.responseText);
+				if(response.nextURL != "undefined"){
+					alert(response.nextURL);
+					Quiz.proccesQuestion(response.nextURL);
+				}else{
+					alert('hej');
+				}
 			  }else if(request.readyState==4 && request.status==400){
 				document.getElementById('status').innerHTML  = '<div class="alert alert-danger" role="alert">Fel svar</div>';
 			  }
