@@ -1,82 +1,55 @@
 "use strict";
 
-var MessageBoard = {
-	messages:[],
-	
+var Quiz = {
+	questions:[],
+	nextUrl: '',
 	init:function(){
-		document.getElementById("skriv").onclick=function(){MessageBoard.messageAdd()};
-		document.onkeypress = function (e) {
-			 if (e.keyCode == 13&& !event.shiftKey){
-				MessageBoard.messageAdd();
-			} 
-		};
+		document.getElementById("answer_btn").addEventListener("click", Quiz.postAnswer);
+		Quiz.proccesQuestion('http://vhost3.lnu.se:20080/question/1');
 	},
-	render:function(){
-		document.getElementById("messages").innerHTML = '';
-		var i = 0;
-		MessageBoard.messages.forEach(function(message){
-			document.getElementById("messages").innerHTML += MessageBoard.messageGenarate(i);
-			i++;
-		});
-		document.getElementById("count").innerHTML = 'Antal meddelanden: ' + i;
+	getQuestion:function(url,callback){
+		  var request = new XMLHttpRequest();
+		  request.open("GET",url,true);
+		  request.send();
+		  request.onreadystatechange=function(){
+			  if (request.readyState==4 && request.status==200){
+				var response = JSON.parse(request.responseText);
+				Quiz.nextUrl = response.nextURL;
+				callback(response.question);
+			  }
+		  }
 	},
-	messageAdd:function(){	
-		MessageBoard.messages.push( new message(document.getElementById("kommentar").value));
-		document.getElementById("kommentar").value = '';
-		MessageBoard.render();
+	postAnswer:function(){	
+		var answer_txt = document.getElementById('answer_con').value;
+		var request = new XMLHttpRequest();
+		  request.open("POST",Quiz.nextUrl,true);
+		  request.setRequestHeader('Content-Type', 'application/json');
+		  request.send(JSON.stringify({answer: answer_txt}));
+		  request.onreadystatechange=function(){
+			  if (request.readyState==4 && request.status==200){
+				document.getElementById('status').innerHTML  = '';
+				var response = JSON.parse(request.responseText);
+				Quiz.nextUrl = response.nextURL; 
+			  	alert(request.responseText);
+			  }else if(request.readyState==4 && request.status==400){
+				document.getElementById('status').innerHTML  = '<div class="alert alert-danger" role="alert">Fel svar</div>';
+			  }
+		  }
+	},
+	proccesQuestion:function(url){	
+		Quiz.getQuestion(url,function(question){
+			document.getElementById('question').innerHTML = question;	
+		});	 
+	},
+	messageRemoveAdd:function(id){
+	
+	},
+	messageRemove:function(num){	
 		
-	},messageGenarate:function(id){	
-		var message = '<div class="panel panel-default"><div class="panel-heading">' + MessageBoard.messages[id].toStringMini() + '<div class="button-right"><button type="button" onclick="MessageBoard.showDate(' + id + ')" id="datum-' + id + '" class="btn btn-default" aria-label="Left Align"><span class="glyphicon glyphicon-info-sign glyphicon-align-left" aria-hidden="true"></span> Visa tiden</button><button type="button" onclick="MessageBoard.messageRemove(' + id + ')" class="btn btn-default" aria-label="Left Align"><span class="glyphicon glyphicon-remove-circle glyphicon-align-left" aria-hidden="true"></span> Radera</button></div></div><div class="panel-body">' + MessageBoard.messages[id].getHTMLText() + '</div></div>';
-		return message;
-		 
-	},messageRemoveAdd:function(id){
-		var i = 0;
-		MessageBoard.messages.forEach(function(message){
-			var string = "radera-"+i;
-			document.getElementById(string).onclick=function(){MessageBoard.messageRemove(this.id);};
-			i++;
-		});
-	},messageRemove:function(num){	
-		MessageBoard.messages.splice(num, 1);
-		MessageBoard.render();
-	},showDate:function(num){	
-		alert(MessageBoard.messages[num].toString());
+	},
+	showDate:function(num){	
+		
 	}
 };
-MessageBoard.init();
-function message(_text)
-{
-   var text;
-   var date;
+Quiz.init();
 
-   this.getText = function() {
-       return text;
-   }
-   this.setText = function(_text) {
-       text = _text;
-   }
-  
-   this.getDate = function() {
-       return date;
-   }
-   this.setDate = function(_date) {
-      date = _date;
-   }  
-   
-   this.toString = function() {
-	  return date.toString();
-
-   };
-   this.toStringMini = function() {
-	  return date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-
-   };
-   this.getHTMLText = function() {
-        return text.replace("\n", "<br />");
-   };
-   var __construct = function() {
-		date =  new Date();
-		text = _text;
-   }()
-
-}
