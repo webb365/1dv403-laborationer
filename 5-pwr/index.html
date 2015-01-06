@@ -9,7 +9,7 @@
     </head>
     <body>
 	    <div class="container">
-			<a class="btn btn-primary btn-lg" id="start" href="#" role="button">Starta datorn</a>
+			
 		</div>
 		<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"       rel="stylesheet">
 		<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -30,11 +30,17 @@
 						  	 <ul class="nav navbar-nav">
 						        <li><a href="#" id="start-camera"><i class="fa fa-camera-retro fa-3x"></i></a></li>
 						   	 </ul>
+						   	  <ul class="nav navbar-nav navbar-right">
+						        <li><a href="#" id="stop"><i class="fa fa-sign-out fa-3x"></i></a></li>
+						   	 </ul>
 						  </div>
 						</nav>
 					</div>
 				</div>
 			</div>
+		</script>
+		<script id="start-template" type="x-tmpl-mustache">
+			<a class="btn btn-primary btn-lg" id="start" href="#" role="button"><i class="fa fa-sign-in"></i> Starta datorn</a>
 		</script>
     </body>
 </html>
