@@ -1,0 +1,41 @@
+#wrapper {
+  display: inline-block; 
+  width: 100%;     
+  max-width: 1600px;      
+  position: relative;  
+}
+#wrapper::after {
+  padding-top: 56.25%; 
+  display: block;
+  content: '';
+}
+#desktop{
+  position: absolute;
+  background-color: green;
+  top: 0; bottom: 0; right: 0; left: 0; 
+}
+#footer{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background-color: rgba(149, 165, 166,0.8);
+	
+}
+#footer a{
+	color: rgba(52, 152, 219,0.9);
+}
+#footer a:hover{
+	color: rgba(41, 128, 185,0.9);
+}
+ 
+.navbar{
+	margin-bottom: 0;
+	border-radius: 0;
+	border: 0;
+	background-color: transparent;
+}
+.container{
+	width: 100%!important;
+	max-width: 1600px;
+}
