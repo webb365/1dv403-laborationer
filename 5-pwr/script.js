@@ -46,6 +46,10 @@ var Computer = {
 			Computer.windowmanager.widows.push(appid);	
 			Computer.windowmanager.render();		
 		},
+		close_window:function(id){
+			Computer.windowmanager.widows.splice(id, 1);
+			Computer.windowmanager.render();
+		},
 		render:function(){
 			var window_id = 1;
 			$('#main').html('');
@@ -60,6 +64,9 @@ var Computer = {
 				var rendered = Mustache.render(template, app_meta);
 				$('#main').append(rendered);
 				console.log('Fönster ' + window_id + ' renderat.');
+				$('#quit-'+window_id).click(function(){
+					Computer.windowmanager.close_window(this.id);
+				});	
 				window_id++;
 			});
 		}

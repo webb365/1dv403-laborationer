@@ -36,6 +36,7 @@
 }
 .window{
 	width: 25%;
+	position: relative;
 }  
 .navbar{
 	margin-bottom: 0;
@@ -46,6 +47,9 @@
 .container{
 	width: 100%!important;
 	max-width: 1600px;
+}
+.panel-heading{
+	cursor:move;
 }
 @media screen and (max-width: 768px) {
 	.container{
