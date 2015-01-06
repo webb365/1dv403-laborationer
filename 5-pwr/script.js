@@ -2,8 +2,15 @@
 
 var Computer = {
 	init:function(){
-		
+	  var template = $('#computer-template').html();
+	  Mustache.parse(template);
+	  var rendered = Mustache.render(template, {name: "Luke"});
+	  $('.container').html(rendered);
 	}
 };
-Computer.init();
 
+$( document ).ready(function() {
+	$('#start').click(function(){
+		Computer.init();
+	});	
+});
