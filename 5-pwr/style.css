@@ -36,12 +36,7 @@
 }
 .window{
 	width: 25%;
-} 
- 
- 
- 
- 
- 
+}  
 .navbar{
 	margin-bottom: 0;
 	border-radius: 0;
@@ -51,4 +46,9 @@
 .container{
 	width: 100%!important;
 	max-width: 1600px;
+}
+@media screen and (max-width: 768px) {
+	.container{
+		display: none;
+	}
 }

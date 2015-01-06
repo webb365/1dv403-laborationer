@@ -51,7 +51,7 @@ var Computer = {
 			$('#main').html('');
 			Computer.windowmanager.widows.forEach(function(appid) {
 				if(appid==1){
-					var app_meta = {id:window_id,titel: "Bildvisare",footer: '',body:''};
+					var app_meta = {id:window_id,titel: '<i class="fa fa-camera-retro"></i> Bildvisare',footer: '',body:''};
 				}else{
 					var app_meta = {titel: "FEL",id:'000',footer: 'FEL',body:'Starta om datorn för att fixa felet.'};
 				}
