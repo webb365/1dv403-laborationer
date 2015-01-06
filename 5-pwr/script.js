@@ -42,9 +42,14 @@ var Computer = {
 		init:function(){
 		    console.log('applicationmanager startad.');
 		},
-		camra:function(){
+		camra:function(id){
 			$.getJSON( "http://homepage.lnu.se/staff/tstjo/labbyServer/imgviewer/", function( data ) {
 				console.log(data);
+				data.forEach(function(obj) {
+					
+				});
+				Computer.windowmanager.widows[(id-1)].footer = '';
+				Computer.windowmanager.render();
 			});
 		}
 	},
@@ -59,7 +64,8 @@ var Computer = {
 		    console.log('Windowmanager startad.');
 		},
 		create_window:function(appid){
-			Computer.windowmanager.widows.push({id:appid,x:0,y:0,footer:'',body:''});	
+			Computer.windowmanager.widows.push({id:appid,x:0,y:0,footer:'<i class="fa fa-refresh fa-spin"></i> Laddar',body:''});
+			Computer.applicationmanager.camra(Computer.windowmanager.widows.length);	
 			console.log('Fönster har skapats.');
 			Computer.windowmanager.render();		
 		},
@@ -82,8 +88,8 @@ var Computer = {
 			Computer.windowmanager.widows.forEach(function(obj) {
 				var appid = obj.id;
 				if(appid==1){
-					Computer.applicationmanager.camra();
-					var app_meta = {id:window_id,titel: '<i class="fa fa-camera-retro"></i> Bildvisare',footer: '<i class="fa fa-refresh fa-spin"></i> Laddar',body:''};
+					
+					var app_meta = {id:window_id,titel: '<i class="fa fa-camera-retro"></i> Bildvisare', footer: obj.footer , body: obj.body};
 				}else{
 					var app_meta = {titel: "FEL",id:'000',footer: 'FEL',body:'Starta om datorn för att fixa felet.'};
 				}
