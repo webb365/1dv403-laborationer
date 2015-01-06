@@ -46,10 +46,10 @@
 			<a class="btn btn-primary btn-lg" id="start" href="#" role="button"><i class="fa fa-sign-in"></i> Starta datorn</a>
 		</script>
 		<script id="window-template" type="x-tmpl-mustache">
-			<div id="window-{{id}}" class="window">
+			<div id="window-{{id}}" data-id="{{id}}" class="window">
 				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">{{&titel}}<a href="#" id="quit-{{id}}" class="pull-right quit"><i class="fa fa-times"></i></a></h3>
+					<div class="panel-heading" data-id="{{id}}">
+						<h3 class="panel-title">{{&titel}}<a href="#" id="quit-{{id}}" data-id="{{id}}" class="pull-right quit"><i class="fa fa-times"></i></a></h3>
 
 					</div>
 					<div class="panel-body" id="body-{{id}}">
