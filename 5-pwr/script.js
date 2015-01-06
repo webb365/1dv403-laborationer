@@ -21,7 +21,8 @@ var Computer = {
 		console.log('Stänger av datorn.');
 			Computer.shutdown();
 		});
-		Computer.windowmanager.init();	
+		Computer.windowmanager.init();
+		Computer.applicationmanager.init();	
 		console.log('Datorn startad.');
 	},
 	shutdown:function(){
@@ -29,10 +30,23 @@ var Computer = {
 		Mustache.parse(template);
 		var rendered = Mustache.render(template);
 		$('.container').html(rendered);
+		Computer.windowmanager.widows = [];
+		Computer.windowmanager.layer = 1;
 		$('#start').click(function(){
 			Computer.start();
 		});	
 		console.log('Datorn avstängd.');
+	},
+	applicationmanager:{
+		applications:[],
+		init:function(){
+		    console.log('applicationmanager startad.');
+		},
+		camra:function(){
+			$.getJSON( "http://homepage.lnu.se/staff/tstjo/labbyServer/imgviewer/", function( data ) {
+				console.log(data);
+			});
+		}
 	},
 	windowmanager:{
 		widows:[],
@@ -42,13 +56,16 @@ var Computer = {
 				console.log('Startar fönster.');
 				Computer.windowmanager.create_window(1);
 		    });
+		    console.log('Windowmanager startad.');
 		},
 		create_window:function(appid){
-			Computer.windowmanager.widows.push({id:appid,x:0,y:0});	
+			Computer.windowmanager.widows.push({id:appid,x:0,y:0,footer:'',body:''});	
+			console.log('Fönster har skapats.');
 			Computer.windowmanager.render();		
 		},
 		close_window:function(id){
 			Computer.windowmanager.widows.splice((id-1), 1);
+			console.log('Fönster har stängts.');
 			Computer.windowmanager.render();
 		},
 		move_window:function(e,id){
@@ -65,7 +82,8 @@ var Computer = {
 			Computer.windowmanager.widows.forEach(function(obj) {
 				var appid = obj.id;
 				if(appid==1){
-					var app_meta = {id:window_id,titel: '<i class="fa fa-camera-retro"></i> Bildvisare',footer: '',body:''};
+					Computer.applicationmanager.camra();
+					var app_meta = {id:window_id,titel: '<i class="fa fa-camera-retro"></i> Bildvisare',footer: '<i class="fa fa-refresh fa-spin"></i> Laddar',body:''};
 				}else{
 					var app_meta = {titel: "FEL",id:'000',footer: 'FEL',body:'Starta om datorn för att fixa felet.'};
 				}
