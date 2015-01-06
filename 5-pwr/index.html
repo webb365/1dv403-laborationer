@@ -42,6 +42,21 @@
 		<script id="start-template" type="x-tmpl-mustache">
 			<a class="btn btn-primary btn-lg" id="start" href="#" role="button"><i class="fa fa-sign-in"></i> Starta datorn</a>
 		</script>
+		<script id="window-template" type="x-tmpl-mustache">
+			<div id="window-{{id}}" class="window">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">{{titel}}</h3>
+					</div>
+					<div class="panel-body">
+						{{body}}
+					</div>
+					<div class="panel-footer">
+						{{footer}}
+					</div>
+				</div>
+			</div>
+		</script>
     </body>
 </html>
 
