@@ -58,7 +58,7 @@ var Computer = {
 						if(obj.thumbWidth > camera.thumbWidth){
 							camera.thumbWidth = obj.thumbWidth;
 						}
-						camera.html += '<a href="#" data-url="'+obj.URL+'" class="change_background"><li><img src="'+obj.thumbURL+'"></li></a>';
+						camera.html += '<a href="#" data-url="'+obj.URL+'" class="change_background"><li><img src="'+obj.thumbURL+'"></li></a>'; 
 					});
 					camera.html += '</ul></div>';
 					camera.thumbWidth += 10;
