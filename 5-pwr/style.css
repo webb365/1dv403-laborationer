@@ -35,7 +35,7 @@
 	color: rgba(41, 128, 185,0.9);
 }
 .window{
-	width: 25%;
+	width: 30%;
 	position: absolute;
 }  
 .navbar{
@@ -48,8 +48,34 @@
 	width: 100%!important;
 	max-width: 1600px;
 }
+.panel{
+	background-color: rgba(236, 240, 241,0.9);
+}
+.panel-heading, .panel-footer{
+	background-color: rgba(189, 195, 199,0.5)!important;
+}
 .panel-heading{
 	cursor:move;
+}
+.panel-body{
+	padding: 0;
+}
+.camera{
+	overflow: scroll;
+}
+.camera ul{
+	list-style: none;
+	padding: 0;
+	text-align: center;
+}
+.camera li{
+	display: inline-block;
+	padding: 5px;
+	background-color: rgba(52, 73, 94,0.8);
+	text-align: center;
+	margin: 2px;
+	height: 60px;
+	width: 85px;
 }
 @media screen and (max-width: 768px) {
 	.container{
