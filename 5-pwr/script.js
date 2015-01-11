@@ -4,7 +4,6 @@ var Computer = {
 	init:function(){
 		console.log('Initsierar platformen.');
 		if(localStorage['applicationmanager']!=undefined && localStorage['windowmanager']!=undefined){
-			Computer.disk.load();
 			Computer.desktop.init();
 		}else{
 			var template = $('#start-template').html();
@@ -50,6 +49,9 @@ var Computer = {
 	},
 	desktop:{
 		init:function(){
+			if(localStorage['applicationmanager']!=undefined && localStorage['windowmanager']!=undefined){
+				Computer.disk.load();
+			}
 			var template = $('#computer-template').html();
 			Mustache.parse(template);
 			var rendered = Mustache.render(template);
@@ -65,11 +67,23 @@ var Computer = {
 				console.log('Låser datorn.');
 				Computer.lockscreen.lock();
 			});
+			Computer.desktop.powerSaver();
 			Computer.windowmanager.init();
 			Computer.applicationmanager.init();
 			Computer.windowmanager.render();
 			console.log('Datorn startad.');
 
+		},
+		powerSaver:function(){
+			$(window).blur(function(){
+				console.log('Sätter datorn i viloläge.');
+				Computer.lockscreen.lock();
+				$(".container").fadeOut("slow");
+			});
+			$(window).focus(function() {
+				console.log('Datorn vaknar från viloläge.');
+				$(".container").fadeIn("slow");
+			});			
 		}	
 	},
 	lockscreen:{
@@ -80,6 +94,7 @@ var Computer = {
 			Computer.lockscreen.lock();
 		},
 		lock:function(){
+			Computer.disk.save();
 			var template = $('#locked-template').html();
 			Mustache.parse(template);
 			var rendered = Mustache.render(template);
