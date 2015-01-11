@@ -148,6 +148,146 @@ var Computer = {
 		init:function(){
 		    console.log('applicationmanager startad.');
 		},
+		Memory:{
+			html:'<div class="row">',
+			create:function(){
+				var cols = 4;
+				var rows = 3;
+				var width = Math.floor(12/cols);
+				var rand_array = RandomGenerator.getPictureArray(rows,cols);
+				var i = 0;
+				var current_col = 0;
+				var current_row = 0;
+				rand_array.forEach(function (item){
+				  Memory.html += '<div class="col-xs-' + width + '"><a id="card-'+ i +'" class="brick">' + getIconHTML(0) + '</a></div>';
+				  current_col++;
+				  i++;
+				  if(current_col==cols){
+					  current_col = 0;
+					  current_row++;
+					  if(current_row==rows){
+						  Memory.html += '</div>';
+					  }else{
+					 	 Memory.html += '</div><div class="row">';
+					  }
+				  }
+				});
+				
+			},
+			display:function(){
+				document.getElementById("memory2").innerHTML = Memory.html;
+			},
+			getIconHTML:function(id){
+			   var icon = '';
+			   switch (id) {
+				    case 0:
+				        icon = "fa-question";
+				        break;
+				    case 1:
+				        icon = "fa-btc";
+				        break;
+				    case 2:
+				        icon = "fa-cc-mastercard";
+				        break;
+				    case 3:
+				        icon = "fa-android";
+				        break;
+				    case 4:
+				        icon = "fa-apple";
+				        break;
+				    case 5:
+				        icon = "fa-cc-visa";
+				        break;
+				    case 6:
+				        icon = "fa-github-alt";
+				        break;
+					case 7:
+				        icon = "fa-spotify";
+				        break;
+				    case 8:
+				        icon = "fa-wordpress";
+				        break;
+				    case 9:
+				        icon = "fa-steam";
+				        break;
+				    case 10:
+				        icon = "fa-paypal";
+				        break;
+				} 
+		       return '<span class="fa-stack fa-lg  icon-style"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa ' + icon + ' fa-stack-1x"></i></span>';
+		   },
+		   RandomGenerator:{
+				
+				getPictureArray: function(rows, cols)
+				{
+					var numberOfImages = rows*cols;
+					var maxImageNumber = numberOfImages/2;
+				
+				   	var imgPlace = [];
+				
+				   for(var i=0; i<numberOfImages; i++)
+					  imgPlace[i] = 0;
+				
+					for(var currentImageNumber=1; currentImageNumber<=maxImageNumber; currentImageNumber++)
+					{		
+						var imageOneOK = false;
+						var imageTwoOK = false;
+						
+						do
+						{
+							if(imageOneOK == false)
+							{
+								var randomOne = Math.floor( (Math.random() * (rows*cols-0) + 0) );				
+								
+								if( imgPlace[randomOne] == 0 )
+								{
+									imgPlace[randomOne] = currentImageNumber;
+									imageOneOK = true;
+								}
+							}
+							
+							if(imageTwoOK == false)
+							{
+								var randomTwo = Math.floor( (Math.random() * (rows*cols-0) + 0) );				
+											
+								if( imgPlace[randomTwo] == 0 )
+								{
+									imgPlace[randomTwo] = currentImageNumber;
+									imageTwoOK = true;
+								}
+							}			
+						}
+						while(imageOneOK == false || imageTwoOK == false);		
+					}
+					
+					return imgPlace;
+				}
+			}
+		},
+		rss:{
+			create:function(id){	
+				$.get( "http://homepage.lnu.se/staff/tstjo/labbyServer/rssproxy/?url="+escape("http://www.dn.se/m/rss/senaste-nytt"), function( data ) {
+					data =data.replace('<a href="http://www.dn.se/m/rss/senaste-nytt">http://www.dn.se/m/rss/senaste-nytt</a><br/>','');
+					data =data.replace("<h2 class='rss_title'>DN.se - Nyheter - Senaste nytt - Nyheter</h2>",'');
+					data =data.replace('<p>DN.se - Nyheter - Senaste nytt - Nyheter</p>','');
+					console.log(data);
+					var rss = {html:data};
+					Computer.windowmanager.widows[(id-1)].footer = '';
+					Computer.applicationmanager.applications.push(rss);
+					Computer.windowmanager.widows[(id-1)].appsession = Computer.applicationmanager.applications.length;
+					Computer.windowmanager.render();
+				});
+				
+			},
+			display:function(id,appsession){
+				
+				if(appsession != 0){
+					Computer.windowmanager.widows[(id-1)].body =  Computer.applicationmanager.applications[(appsession-1)].html;
+					
+				}
+			}
+
+		},
 		camera:{
 			create:function(id){	
 				$.getJSON( "http://homepage.lnu.se/staff/tstjo/labbyServer/imgviewer/", function( data ) {
@@ -216,6 +356,10 @@ var Computer = {
 				console.log('Startar fönster.');
 				Computer.windowmanager.create_window(1);
 		    });
+		    $('#start-rss').click(function(){
+				console.log('Startar fönster.');
+				Computer.windowmanager.create_window(3);
+		    });
 		    $( window ).resize(function() {
 			    Computer.windowmanager.render();
 		    });
@@ -225,6 +369,8 @@ var Computer = {
 			Computer.windowmanager.widows.push({id:appid,appsession:0,x:0,y:0,footer:'<i class="fa fa-refresh fa-spin"></i> Laddar',body:''});
 			if(appid==1){
 				Computer.applicationmanager.camera.create(Computer.windowmanager.widows.length);	
+			}else if(appid==3){
+				Computer.applicationmanager.rss.create(Computer.windowmanager.widows.length);
 			}
 			console.log('Fönster har skapats.');
 			Computer.windowmanager.render();		
@@ -255,6 +401,9 @@ var Computer = {
 				}else if(appid==2){
 					Computer.applicationmanager.camera.image.display(window_id,appsession);
 					var app_meta = {id:window_id,titel: '<i class="fa fa-picture-o"></i> Bild', footer: obj.footer , body: obj.body};
+				}else if(appid==3){
+					Computer.applicationmanager.rss.display(window_id,appsession);
+					var app_meta = {id:window_id,titel: '<i class="fa fa-rss"></i> Rss', footer: obj.footer , body: obj.body};
 				}else{
 					var app_meta = {titel: "FEL",id:'000',footer: 'FEL',body:'Starta om datorn för att fixa felet.'};
 				}
