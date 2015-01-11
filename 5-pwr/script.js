@@ -148,34 +148,40 @@ var Computer = {
 		init:function(){
 		    console.log('applicationmanager startad.');
 		},
-		Memory:{
-			html:'<div class="row">',
-			create:function(){
+		memory:{
+			create:function(id){
+				var memory = {html:'<div class="game"><div id="memory"><div class="row">'};
 				var cols = 4;
 				var rows = 3;
 				var width = Math.floor(12/cols);
-				var rand_array = RandomGenerator.getPictureArray(rows,cols);
+				var rand_array = Computer.applicationmanager.memory.randomGenerator.getPictureArray(rows,cols);
 				var i = 0;
 				var current_col = 0;
 				var current_row = 0;
 				rand_array.forEach(function (item){
-				  Memory.html += '<div class="col-xs-' + width + '"><a id="card-'+ i +'" class="brick">' + getIconHTML(0) + '</a></div>';
+				  memory.html += '<div class="col-xs-' + width + '"><a id="card-'+ i +'" class="brick">' + Computer.applicationmanager.memory.getIconHTML(0) + '</a></div>';
 				  current_col++;
 				  i++;
 				  if(current_col==cols){
 					  current_col = 0;
 					  current_row++;
 					  if(current_row==rows){
-						  Memory.html += '</div>';
+						   memory.html += '</div>';
 					  }else{
-					 	 Memory.html += '</div><div class="row">';
+					 	  memory.html += '</div><div class="row">';
 					  }
 				  }
 				});
-				
+				memory.html += '</div></div>';					
+				Computer.windowmanager.widows[(id-1)].footer = '';
+				Computer.applicationmanager.applications.push(memory);
+				Computer.windowmanager.widows[(id-1)].appsession = Computer.applicationmanager.applications.length;
+				Computer.windowmanager.render();
 			},
-			display:function(){
-				document.getElementById("memory2").innerHTML = Memory.html;
+			display:function(id,appsession){
+				if(appsession != 0){
+					Computer.windowmanager.widows[(id-1)].body =  Computer.applicationmanager.applications[(appsession-1)].html;		
+				}
 			},
 			getIconHTML:function(id){
 			   var icon = '';
@@ -216,8 +222,7 @@ var Computer = {
 				} 
 		       return '<span class="fa-stack fa-lg  icon-style"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa ' + icon + ' fa-stack-1x"></i></span>';
 		   },
-		   RandomGenerator:{
-				
+		   randomGenerator:{
 				getPictureArray: function(rows, cols)
 				{
 					var numberOfImages = rows*cols;
@@ -279,8 +284,7 @@ var Computer = {
 				});
 				
 			},
-			display:function(id,appsession){
-				
+			display:function(id,appsession){				
 				if(appsession != 0){
 					Computer.windowmanager.widows[(id-1)].body =  Computer.applicationmanager.applications[(appsession-1)].html;
 					
@@ -360,6 +364,10 @@ var Computer = {
 				console.log('Startar fönster.');
 				Computer.windowmanager.create_window(3);
 		    });
+		    $('#start-memory').click(function(){
+				console.log('Startar fönster.');
+				Computer.windowmanager.create_window(4);
+		    });
 		    $( window ).resize(function() {
 			    Computer.windowmanager.render();
 		    });
@@ -371,6 +379,8 @@ var Computer = {
 				Computer.applicationmanager.camera.create(Computer.windowmanager.widows.length);	
 			}else if(appid==3){
 				Computer.applicationmanager.rss.create(Computer.windowmanager.widows.length);
+			}else if(appid==4){
+				Computer.applicationmanager.memory.create(Computer.windowmanager.widows.length);
 			}
 			console.log('Fönster har skapats.');
 			Computer.windowmanager.render();		
@@ -404,6 +414,9 @@ var Computer = {
 				}else if(appid==3){
 					Computer.applicationmanager.rss.display(window_id,appsession);
 					var app_meta = {id:window_id,titel: '<i class="fa fa-rss"></i> Rss', footer: obj.footer , body: obj.body};
+				}else if(appid==4){
+					Computer.applicationmanager.memory.display(window_id,appsession);
+					var app_meta = {id:window_id,titel: '<i class="fa fa-gamepad"></i> Memory', footer: obj.footer , body: obj.body};
 				}else{
 					var app_meta = {titel: "FEL",id:'000',footer: 'FEL',body:'Starta om datorn för att fixa felet.'};
 				}
