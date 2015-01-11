@@ -150,16 +150,47 @@ var Computer = {
 		},
 		memory:{
 			create:function(id){
-				var memory = {html:'<div class="game"><div id="memory"><div class="row">'};
+				var memory =  Computer.applicationmanager.memory.render((Computer.applicationmanager.applications.length+1),{html:'<div id="game-'+id+'" class="game"><div id="memory"><div class="row">', rand: Computer.applicationmanager.memory.randomGenerator.getPictureArray(3,4),changes:[]});			
+				Computer.windowmanager.widows[(id-1)].footer = '';
+				Computer.applicationmanager.applications.push(memory);
+				Computer.windowmanager.widows[(id-1)].appsession = Computer.applicationmanager.applications.length;
+				Computer.windowmanager.render();
+			},
+			display:function(id,appsession){
+				if(appsession != 0){
+					Computer.windowmanager.widows[(id-1)].body =  Computer.applicationmanager.applications[(appsession-1)].html;
+					setTimeout(function(){
+						$('#game-'+id+' .brick').unbind().click(function(){
+							var brick_id = $(this).attr("id");;
+							Computer.applicationmanager.memory.click(brick_id,id,appsession);
+						});
+					},1);			
+				}
+			},
+			render:function(id,memory){
 				var cols = 4;
 				var rows = 3;
+				var rand_array = memory.rand;
+				console.log(memory.changes);
 				var width = Math.floor(12/cols);
-				var rand_array = Computer.applicationmanager.memory.randomGenerator.getPictureArray(rows,cols);
 				var i = 0;
 				var current_col = 0;
 				var current_row = 0;
+				memory.changes.push.apply(memory.changes, memory.finished);
 				rand_array.forEach(function (item){
-				  memory.html += '<div class="col-xs-' + width + '"><a id="card-'+ i +'" class="brick">' + Computer.applicationmanager.memory.getIconHTML(0) + '</a></div>';
+					var skip = false;
+					var used = [];
+				 memory.changes.forEach(function (value){
+					 if(i == value.brick_id && used.indexOf(value.brick_id) == -1 ){
+						used.push(value.brick_id);
+						memory.html += '<div class="col-xs-' + width + '"><a id="card-'+ i +'" class="brick">' + Computer.applicationmanager.memory.getIconHTML(value.brick) + '</a></div>'; 					
+						skip = true;
+					 }
+				  	
+				 });
+				 if(!skip){
+				 	memory.html += '<div class="col-xs-' + width + '"><a id="card-'+ i +'" class="brick">' + Computer.applicationmanager.memory.getIconHTML(0) + '</a></div>'; 
+				 }
 				  current_col++;
 				  i++;
 				  if(current_col==cols){
@@ -172,16 +203,45 @@ var Computer = {
 					  }
 				  }
 				});
-				memory.html += '</div></div>';					
-				Computer.windowmanager.widows[(id-1)].footer = '';
-				Computer.applicationmanager.applications.push(memory);
-				Computer.windowmanager.widows[(id-1)].appsession = Computer.applicationmanager.applications.length;
-				Computer.windowmanager.render();
+				memory.html += '</div></div>';		
+				return memory;
 			},
-			display:function(id,appsession){
-				if(appsession != 0){
-					Computer.windowmanager.widows[(id-1)].body =  Computer.applicationmanager.applications[(appsession-1)].html;		
+			click:function(brick,id,appsession){
+				brick =parseInt(brick.substring(5));
+				console.log(brick+'#'+Computer.applicationmanager.applications[(appsession-1)].rand[brick]);
+				Computer.applicationmanager.applications[(appsession-1)].changes.push({brick_id:brick,brick:Computer.applicationmanager.applications[(appsession-1)].rand[brick]});
+				Computer.applicationmanager.applications[(appsession-1)].html = '<div id="game-'+id+'" class="game"><div id="memory"><div class="row">';  
+				var memory = Computer.applicationmanager.applications[(appsession-1)];
+				if(memory.finished == undefined){
+					memory.finished = [];
 				}
+
+				if(memory.attempts == undefined){
+					memory.attempts = 0;
+				}
+				memory = Computer.applicationmanager.memory.render(appsession,memory);					
+				
+				
+				memory.changes = memory.changes.filter(function(item) {
+				    return memory.finished.indexOf(item) === -1;
+				});
+				console.log(memory.changes);
+				if(memory.changes.length == 2){
+					if(memory.changes[0].brick == memory.changes[1].brick && memory.changes[0].brick_id != memory.changes[1].brick_id){
+						memory.finished.push(memory.changes[0]);
+						memory.finished.push(memory.changes[1]);
+						memory.changes = [];
+					}else{
+						memory.changes = [];
+					}
+					memory.attempts++;
+					
+				}
+				if(memory.finished.length==12){
+					memory.html += '<div class="attempts"><h2>Du klarade det på '+memory.attempts+' försök</h2></div>';
+				}
+				Computer.applicationmanager.applications.push(memory);
+				Computer.windowmanager.render();
 			},
 			getIconHTML:function(id){
 			   var icon = '';
@@ -320,17 +380,18 @@ var Computer = {
 					Computer.windowmanager.widows[(id-1)].body =  Computer.applicationmanager.applications[(appsession-1)].html;
 					setTimeout(function(){ 
 						$('#camera-'+appsession+' li').css({height: Computer.applicationmanager.applications[(appsession-1)].thumbHeight , width : Computer.applicationmanager.applications[(appsession-1)].thumbWidth });
+
+						$('#camera-'+appsession+' .images').unbind().click(function(){
+							var url = $(this).attr("data-url");
+							Computer.windowmanager.create_window(2);
+							Computer.applicationmanager.camera.image.create(url,Computer.windowmanager.widows.length);
+						});	
 						$('.images').bind("contextmenu",function(e){
 							var bg_url = $(this).attr("data-url");
 							localStorage['Background_url'] = bg_url;
 							$('#desktop').css('background-image','url('+bg_url+')');
 						    return false;
 						});
-						$('#camera-'+appsession+' .images').unbind().click(function(){
-							var url = $(this).attr("data-url");
-							Computer.windowmanager.create_window(2);
-							Computer.applicationmanager.camera.image.create(url,Computer.windowmanager.widows.length);
-						});	
 					 }, 1);
 					
 				}
@@ -355,6 +416,8 @@ var Computer = {
 	windowmanager:{
 		widows:[],
 		layer: 1,
+		x:0,
+		y:0,
 		init:function(){
 		    $('#start-camera').click(function(){
 				console.log('Startar fönster.');
@@ -374,7 +437,7 @@ var Computer = {
 		    console.log('Windowmanager startad.');
 		},
 		create_window:function(appid){
-			Computer.windowmanager.widows.push({id:appid,appsession:0,x:0,y:0,footer:'<i class="fa fa-refresh fa-spin"></i> Laddar',body:''});
+			Computer.windowmanager.widows.push({id:appid,appsession:0,x:Computer.windowmanager.x,y:Computer.windowmanager.y,footer:'<i class="fa fa-refresh fa-spin"></i> Laddar',body:''});
 			if(appid==1){
 				Computer.applicationmanager.camera.create(Computer.windowmanager.widows.length);	
 			}else if(appid==3){
@@ -382,6 +445,14 @@ var Computer = {
 			}else if(appid==4){
 				Computer.applicationmanager.memory.create(Computer.windowmanager.widows.length);
 			}
+			if(Computer.windowmanager.x > ($('#desktop').width()-400)){
+				Computer.windowmanager.x = 0
+			}
+			if(Computer.windowmanager.y > ($('#desktop').height()-600)){
+				Computer.windowmanager.y = 0
+			}
+			Computer.windowmanager.x += 20;
+			Computer.windowmanager.y += 20;
 			console.log('Fönster har skapats.');
 			Computer.windowmanager.render();		
 		},
