@@ -4,7 +4,12 @@ var Computer = {
 	init:function(){
 		console.log('Initsierar platformen.');
 		if(localStorage['applicationmanager']!=undefined && localStorage['windowmanager']!=undefined){
-			Computer.desktop.init();
+			if(localStorage['locked']=='true'){
+				Computer.lockscreen.init();	
+			}else{
+				Computer.desktop.init();	
+			}
+			
 		}else{
 			var template = $('#start-template').html();
 			Mustache.parse(template);
@@ -65,9 +70,9 @@ var Computer = {
 			});
 			$('#lock').click(function(){
 				console.log('Låser datorn.');
-				Computer.lockscreen.lock();
+				Computer.lockscreen.preLock();
 			});
-			Computer.desktop.powerSaver();
+			//Computer.desktop.powerSaver();
 			Computer.windowmanager.init();
 			Computer.applicationmanager.init();
 			Computer.windowmanager.render();
@@ -77,7 +82,7 @@ var Computer = {
 		powerSaver:function(){
 			$(window).blur(function(){
 				console.log('Sätter datorn i viloläge.');
-				Computer.lockscreen.lock();
+				Computer.lockscreen.preLock();
 				$(".container").fadeOut("slow");
 			});
 			$(window).focus(function() {
@@ -93,8 +98,12 @@ var Computer = {
 			}
 			Computer.lockscreen.lock();
 		},
-		lock:function(){
+		preLock:function(){
 			Computer.disk.save();
+			localStorage['locked']=true;
+			Computer.lockscreen.lock();
+		},
+		lock:function(){
 			var template = $('#locked-template').html();
 			Mustache.parse(template);
 			var rendered = Mustache.render(template);
@@ -108,6 +117,7 @@ var Computer = {
 				var password = $('#inputPassword').val();
 				if(Computer.lockscreen.control(username,password)){	
 					console.log('Datorn upplåst.');
+					localStorage['locked'] = false;
 					Computer.desktop.init();	
 				}else{
 					console.log('Fel lösenord eller användarnamn.');
@@ -150,7 +160,7 @@ var Computer = {
 						if(obj.thumbWidth > camera.thumbWidth){
 							camera.thumbWidth = obj.thumbWidth;
 						}
-						camera.html += '<a href="#" data-url="'+obj.URL+'" class="change_background"><li><img src="'+obj.thumbURL+'"></li></a>'; 
+						camera.html += '<a href="#" data-url="'+obj.URL+'" class="images"><li><img src="'+obj.thumbURL+'"></li></a>'; 
 					});
 					camera.html += '</ul></div>';
 					camera.thumbWidth += 10;
@@ -166,13 +176,33 @@ var Computer = {
 					Computer.windowmanager.widows[(id-1)].body =  Computer.applicationmanager.applications[(appsession-1)].html;
 					setTimeout(function(){ 
 						$('#camera-'+appsession+' li').css({height: Computer.applicationmanager.applications[(appsession-1)].thumbHeight , width : Computer.applicationmanager.applications[(appsession-1)].thumbWidth });
-						$('.change_background').click(function(){
+						$('.images').bind("contextmenu",function(e){
 							var bg_url = $(this).attr("data-url");
 							localStorage['Background_url'] = bg_url;
 							$('#desktop').css('background-image','url('+bg_url+')');
+						    return false;
+						});
+						$('#camera-'+appsession+' .images').unbind().click(function(){
+							var url = $(this).attr("data-url");
+							Computer.windowmanager.create_window(2);
+							Computer.applicationmanager.camera.image.create(url,Computer.windowmanager.widows.length);
 						});	
 					 }, 1);
 					
+				}
+			},
+			image:{
+				create:function(url,id){
+					var image = {html:'<image src="'+url+'" id="bild-'+(Computer.applicationmanager.applications.length+1)+'">'}
+					Computer.windowmanager.widows[(id-1)].footer = '';
+					Computer.applicationmanager.applications.push(image);
+					Computer.windowmanager.widows[(id-1)].appsession = Computer.applicationmanager.applications.length;
+					Computer.windowmanager.render();
+				},
+				display:function(id,appsession){
+					if(appsession != 0){
+						Computer.windowmanager.widows[(id-1)].body =  Computer.applicationmanager.applications[(appsession-1)].html;
+					}
 				}
 			}
 		}
@@ -193,7 +223,9 @@ var Computer = {
 		},
 		create_window:function(appid){
 			Computer.windowmanager.widows.push({id:appid,appsession:0,x:0,y:0,footer:'<i class="fa fa-refresh fa-spin"></i> Laddar',body:''});
-			Computer.applicationmanager.camera.create(Computer.windowmanager.widows.length);	
+			if(appid==1){
+				Computer.applicationmanager.camera.create(Computer.windowmanager.widows.length);	
+			}
 			console.log('Fönster har skapats.');
 			Computer.windowmanager.render();		
 		},
@@ -204,7 +236,7 @@ var Computer = {
 		},
 		move_window:function(e,id){
 			
-			if(e.pageY>33&&e.pageY<(($('#desktop').height()-$('#window-'+id).height()-16))&&e.pageX>180&&e.pageX<($('#desktop').width()+180-$('#window-'+id).width())){
+			if(e.pageY>33&&e.pageY<$('#desktop').height()&&e.pageX>180&&e.pageX<($('#desktop').width()+180)){
 				$('#window-'+id).css({"top":(e.pageY-35)+'px',"left":(e.pageX-180)+'px'});
 			}
 			Computer.windowmanager.widows[(id-1)].x=e.pageX-180;
@@ -220,6 +252,9 @@ var Computer = {
 				if(appid==1){
 					Computer.applicationmanager.camera.display(window_id,appsession);
 					var app_meta = {id:window_id,titel: '<i class="fa fa-camera-retro"></i> Bildvisare', footer: obj.footer , body: obj.body};
+				}else if(appid==2){
+					Computer.applicationmanager.camera.image.display(window_id,appsession);
+					var app_meta = {id:window_id,titel: '<i class="fa fa-picture-o"></i> Bild', footer: obj.footer , body: obj.body};
 				}else{
 					var app_meta = {titel: "FEL",id:'000',footer: 'FEL',body:'Starta om datorn för att fixa felet.'};
 				}
