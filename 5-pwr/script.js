@@ -3,30 +3,23 @@
 var Computer = {
 	init:function(){
 		console.log('Initsierar platformen.');
-		var template = $('#start-template').html();
-		Mustache.parse(template);
-		var rendered = Mustache.render(template);
-		$('.container').html(rendered);
-		$('#start').click(function(){
-			console.log('Startar datorn.');
-			Computer.start();
-		});	
+		if(localStorage['applicationmanager']!=undefined && localStorage['windowmanager']!=undefined){
+			Computer.disk.load();
+			Computer.desktop.init();
+		}else{
+			var template = $('#start-template').html();
+			Mustache.parse(template);
+			var rendered = Mustache.render(template);
+			$('.container').html(rendered);
+			$('#start').click(function(){
+				Computer.start();
+			});				
+		}
 	},
 	start:function(){
-		var template = $('#computer-template').html();
-		Mustache.parse(template);
-		var rendered = Mustache.render(template);
-		$('.container').html(rendered);
-		if(localStorage['Background_url']!=undefined){
-			$('#desktop').css('background-image','url('+localStorage['Background_url']+')');
-		}
-		$('#stop').click(function(){
-		console.log('Stänger av datorn.');
-			Computer.shutdown();
-		});
-		Computer.windowmanager.init();
-		Computer.applicationmanager.init();	
-		console.log('Datorn startad.');
+		console.log('Startar datorn.');
+		Computer.lockscreen.init();	
+	
 	},
 	shutdown:function(){
 		var template = $('#start-template').html();
@@ -36,10 +29,94 @@ var Computer = {
 		Computer.windowmanager.widows = [];
 		Computer.applicationmanager.applications = [];
 		Computer.windowmanager.layer = 1;
+		delete localStorage['applicationmanager'];
+		delete localStorage['windowmanager'];
 		$('#start').click(function(){
 			Computer.start();
 		});	
 		console.log('Datorn avstängd.');
+	},
+	disk:{
+		save:function(){
+			console.log('Sparar till disk');
+			localStorage['applicationmanager'] = JSON.stringify(Computer.applicationmanager.applications);
+			localStorage['windowmanager'] = JSON.stringify(Computer.windowmanager.widows);
+		},
+		load:function(){
+			console.log('Laddar in session från disk');
+			Computer.applicationmanager.applications = JSON.parse(localStorage['applicationmanager']);
+			Computer.windowmanager.widows =JSON.parse(localStorage['windowmanager']);
+		}
+	},
+	desktop:{
+		init:function(){
+			var template = $('#computer-template').html();
+			Mustache.parse(template);
+			var rendered = Mustache.render(template);
+			$('.container').html(rendered);
+			if(localStorage['Background_url']!=undefined){
+				$('#desktop').css('background-image','url('+localStorage['Background_url']+')');
+			}
+			$('#stop').click(function(){
+				console.log('Stänger av datorn.');
+				Computer.shutdown();
+			});
+			$('#lock').click(function(){
+				console.log('Låser datorn.');
+				Computer.lockscreen.lock();
+			});
+			Computer.windowmanager.init();
+			Computer.applicationmanager.init();
+			Computer.windowmanager.render();
+			console.log('Datorn startad.');
+
+		}	
+	},
+	lockscreen:{
+		init:function(){
+			if(localStorage['users']==undefined){
+				localStorage['users']= JSON.stringify([{username:'admin',password:'password',admin:true},{username:'user',password:'password',admin:false}]);
+			}
+			Computer.lockscreen.lock();
+		},
+		lock:function(){
+			var template = $('#locked-template').html();
+			Mustache.parse(template);
+			var rendered = Mustache.render(template);
+			$('.container').html(rendered);
+			$('#logginerror').hide();
+			$("#loggain").submit(function(e){
+			    return false;
+			});	
+			$('#loggin').click(function(){
+				var username = $('#inputUsername').val();
+				var password = $('#inputPassword').val();
+				if(Computer.lockscreen.control(username,password)){	
+					console.log('Datorn upplåst.');
+					Computer.desktop.init();	
+				}else{
+					console.log('Fel lösenord eller användarnamn.');
+					$('#logginerror').show();
+				}
+			});		
+		},
+		control:function(username,password){
+			var match = false;
+			var users = JSON.parse(localStorage['users']);
+			users.forEach(function(user){
+				if(username==user.username&&password==user.password){
+					match = true;
+					Computer.type=user.type;
+					Computer.username=user.username;
+				}
+			});
+			if(match){
+				return true;
+			}else{
+				return false;
+			}
+		}
+
 	},
 	applicationmanager:{
 		applications:[],
@@ -117,7 +194,7 @@ var Computer = {
 			}
 			Computer.windowmanager.widows[(id-1)].x=e.pageX-180;
 			Computer.windowmanager.widows[(id-1)].y=e.pageY-35;
-			
+			Computer.disk.save();
 		},
 		render:function(){
 			var window_id =1;
@@ -158,6 +235,7 @@ var Computer = {
 				});
 				window_id++;
 			});
+			Computer.disk.save();
 		}
 	}
 };
