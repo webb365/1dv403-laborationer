@@ -72,7 +72,7 @@ var Computer = {
 				console.log('Låser datorn.');
 				Computer.lockscreen.preLock();
 			});
-			//Computer.desktop.powerSaver();
+			Computer.desktop.powerSaver();
 			Computer.windowmanager.init();
 			Computer.applicationmanager.init();
 			Computer.windowmanager.render();
@@ -337,7 +337,10 @@ var Computer = {
 					data =data.replace('<p>DN.se - Nyheter - Senaste nytt - Nyheter</p>','');
 					console.log(data);
 					var rss = {html:data};
-					Computer.windowmanager.widows[(id-1)].footer = '';
+					var d = new Date();
+					var h = d.getHours();
+					var m = d.getMinutes();
+					Computer.windowmanager.widows[(id-1)].footer = 'Uppdaterad senast: '+h+':'+m;
 					Computer.applicationmanager.applications.push(rss);
 					Computer.windowmanager.widows[(id-1)].appsession = Computer.applicationmanager.applications.length;
 					Computer.windowmanager.render();
@@ -463,7 +466,7 @@ var Computer = {
 		},
 		move_window:function(e,id){
 			
-			if(e.pageY>33&&e.pageY<$('#desktop').height()&&e.pageX>180&&e.pageX<($('#desktop').width()+180)){
+			if(e.pageY>33&&e.pageY<($('#desktop').height()-$('#window-'+id).height())&&e.pageX>180&&e.pageX<($('#desktop').width()-$('#window-'+id).width()+180)){
 				$('#window-'+id).css({"top":(e.pageY-35)+'px',"left":(e.pageX-180)+'px'});
 			}
 			Computer.windowmanager.widows[(id-1)].x=e.pageX-180;
