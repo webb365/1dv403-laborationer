@@ -171,7 +171,6 @@ var Computer = {
 				var cols = 4;
 				var rows = 3;
 				var rand_array = memory.rand;
-				console.log(memory.changes);
 				var width = Math.floor(12/cols);
 				var i = 0;
 				var current_col = 0;
@@ -208,7 +207,6 @@ var Computer = {
 			},
 			click:function(brick,id,appsession){
 				brick =parseInt(brick.substring(5));
-				console.log(brick+'#'+Computer.applicationmanager.applications[(appsession-1)].rand[brick]);
 				Computer.applicationmanager.applications[(appsession-1)].changes.push({brick_id:brick,brick:Computer.applicationmanager.applications[(appsession-1)].rand[brick]});
 				Computer.applicationmanager.applications[(appsession-1)].html = '<div id="game-'+id+'" class="game"><div id="memory"><div class="row">';  
 				var memory = Computer.applicationmanager.applications[(appsession-1)];
@@ -225,7 +223,6 @@ var Computer = {
 				memory.changes = memory.changes.filter(function(item) {
 				    return memory.finished.indexOf(item) === -1;
 				});
-				console.log(memory.changes);
 				if(memory.changes.length == 2){
 					if(memory.changes[0].brick == memory.changes[1].brick && memory.changes[0].brick_id != memory.changes[1].brick_id){
 						memory.finished.push(memory.changes[0]);
