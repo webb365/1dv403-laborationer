@@ -18,6 +18,28 @@ var MessageBoard = {
 			document.getElementById("messages").innerHTML += MessageBoard.messageGenarate(i);
 			i++;
 		});
+		var date_btns = document.querySelectorAll(".date-btn");
+		
+		for (var i = 0; i < date_btns.length; i++) {
+		    var date_btn = date_btns[i];
+		    date_btn.onclick = function () {
+			    var id =this.id;
+			    id= parseInt(id.substring(6));
+			    MessageBoard.showDate(id);
+				console.log(id);
+		    };
+		}
+		var remove_btns = document.querySelectorAll(".remove-btn");
+		
+		for (var i = 0; i < remove_btns.length; i++) {
+		    var remove_btn = remove_btns[i];
+		    remove_btn.onclick = function () {
+			    var id =this.id;
+			    id= parseInt(id.substring(7));
+			    MessageBoard.messageRemove(id);
+				
+		    };
+		}
 		document.getElementById("count").innerHTML = 'Antal meddelanden: ' + i;
 	},
 	messageAdd:function(){	
@@ -26,7 +48,8 @@ var MessageBoard = {
 		MessageBoard.render();
 		
 	},messageGenarate:function(id){	
-		var message = '<div class="panel panel-default"><div class="panel-heading">' + MessageBoard.messages[id].toStringMini() + '<div class="button-right"><button type="button" onclick="MessageBoard.showDate(' + id + ')" id="datum-' + id + '" class="btn btn-default" aria-label="Left Align"><span class="glyphicon glyphicon-info-sign glyphicon-align-left" aria-hidden="true"></span> Visa tiden</button><button type="button" onclick="MessageBoard.messageRemove(' + id + ')" class="btn btn-default" aria-label="Left Align"><span class="glyphicon glyphicon-remove-circle glyphicon-align-left" aria-hidden="true"></span> Radera</button></div></div><div class="panel-body">' + MessageBoard.messages[id].getHTMLText() + '</div></div>';
+		//onclick="MessageBoard.messageRemove(' + id + ')"
+		var message = '<div class="panel panel-default"><div class="panel-heading">' + MessageBoard.messages[id].toStringMini() + '<div class="button-right"><button type="button" id="datum-' + id + '" class="btn btn-default date-btn" aria-label="Left Align"><span class="glyphicon glyphicon-info-sign glyphicon-align-left" aria-hidden="true"></span> Visa tiden</button><button type="button" id="remove-' + id + '"  class="btn btn-default remove-btn" aria-label="Left Align"><span class="glyphicon glyphicon-remove-circle glyphicon-align-left" aria-hidden="true"></span> Radera</button></div></div><div class="panel-body">' + MessageBoard.messages[id].getHTMLText() + '</div></div>';
 		return message;
 		 
 	},messageRemoveAdd:function(id){
